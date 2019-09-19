@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="icon" type="image/ico" href="images/title.png" />
+		<link href="https://fonts.googleapis.com/css?family=Cutive+Mono&display=swap" rel="stylesheet">
+		<title>$0.00 - Hi Low Game</title>
+		<script>
+			//var start = 0;
+			var balance = 0;
+			//var quit = "You have walked away with $" + balance.toFixed(2) + " Thanks for playing"
+			var error = "An error has occurred"
+			var deposit = 0;
+			var checkDeposit = false;
+			var userBet = 0;
+			var moneyPlaced = 0;
+			var num1 = 0;
+			var num2 = 0;
+			var userInput = [];
+			var winAmount = 0; 
+			var winPercent = 0;
+			var highWin = 0;
+			var lowWin = 0;
+			
+			//Sets checkDeposit back to false so game can restart and user can deposit. Also creates an intentional error to force quit the game 
+			function quitgame(){
+				checkDeposit = false
+				throw new Error("This is not an error. This is to quit the program.");
+			}
+			
+			//Update Function - Used for testing
+			/*function update(){
+				document.getElementById("deposit").innerHTML = "You have $" + balance
+				
+				document.getElementById("betround").innerHTML = "You Placed $" + moneyPlaced
+				
+				document.title = "$" + balance  + " - Hi Low Game"
+				
+				document.getElementById("ranNum1").innerHTML = "Number 1: " + num1
+				
+				document.getElementById("ranNum2").innerHTML = "Number 2: " + num2
+				
+				document.getElementById("hiWin").innerHTML = "High <br>x" + highWin
+				
+				document.getElementById("loWin").innerHTML = "Low <br>x" + lowWin
+				
+				document.getElementById("amountWon").innerHTML = "Amount Won: $" + winAmount
+				
+				document.getElementById("userGuess").innerHTML = "User Input: " + userInput
+				
+				//document.getElementById("startamount").innerHTML = "Start Amount: $" + start
+			}*/
+			
+			//Menu Function
+			function startMenu(){
+				var menu = prompt("Welcome to Hi Low Game. \nWhat would you like to do?\n 1. Play Game\n 2. Quit Game")
+				startMenu2()
+				function startMenu2(){
+					if(menu == 1){
+						//alert("User Input: " + menu +"\nContinue")
+						userDeposit()
+					}
+					
+					else if(menu == 2 || menu == null){
+						alert("User Input: " + menu +"\nYou have quit")
+						quitgame()
+					}
+				
+					else{
+						//menu = prompt("User Input: " + menu + "\nAn error has occurred while running the program. Please try again.\n 1. Play Game\n 2. Quit Game")
+						while(isNaN(menu) || menu == "" || menu > 2 || menu < 1 || menu < 2 & menu > 1){
+							menu = prompt("User Input: " + menu + "\nPlease enter a valid input. Please try again.\n 1. Play Game\n 2. Quit Game")
+							startMenu2()
+						}
+					}
+				}
+			}
+			
+			//Deposit Function
+			function userDeposit(){
+				if (checkDeposit == true){
+						alert("Sorry you have already deposited this game")
+					}
+				
+				else{
+					deposit = prompt("How much would you want to deposit between $1-$1000.")
+
+					while(checkDeposit == false){
+						while(isNaN(deposit) || deposit == "" || deposit <= 0 || deposit > 1000){
+							deposit = prompt("User input: " + deposit + "\nPlease enter a valid amount between $1-$1000.\nHow much would you want to deposit?")
+						}
+
+						checkDeposit = true
+						balance = parseFloat(Number(deposit))
+						//alert("User input: " + deposit) 
+						alert("You now Have: $" + balance)
+						//update()
+						//alert("Continue")
+						randomNumber()
+						
+					}
+				}
+			}
+					
+			//User Round Bet
+			function roundBet(){
+				if (balance == 0){
+					alert("Sorry you don't have any money left.")
+				}
+				
+				else{
+					userBet = prompt("How much do you want to bet this round?\nYou have $" + balance)
+					
+					while(userBet <= 0 || isNaN(userBet) || userBet == ""){
+						userBet = prompt("User Input: " + userBet + "\nSorry your input was invalid.\nHow much do you want to bet this round?\nYou have: $" + balance + " to play with")
+					}
+					
+					while(userBet > parseFloat(balance)){
+						userBet = prompt("User Input: " + userBet + "\nSorry you don't have enough balance.\nYou have $" + balance + " to play with")
+					}
+					
+					if(userBet <= balance){
+						alert("You bet $" + userBet)
+						moneyPlaced = Number(moneyPlaced) + Number(userBet)
+						balance = balance - userBet
+						//update()
+						//Resets user bet to 0
+						userBet = 0;
+					}
+					
+					else{
+						roundBet()
+					}
+					
+					moneyPlaced = Number(moneyPlaced) + Number(userBet)
+					highLow()
+				}
+			}
+			
+			//Number generation
+			function randomNumber() {
+				num1 = Math.floor(Math.random() * 100 + 1);
+				num2 = Math.floor(Math.random() * 100 + 1);
+				if (num2 == num1){
+					num2 = Math.floor(Math.random() * 100 + 1);
+				}
+				else{
+					//update()
+					percentCal()
+					roundBet()
+				}
+			}
+			
+			/*function randomNumber2() {
+				num2 = Math.floor(Math.random() * 100 + 1);
+				update()
+			}*/
+			
+			//Calculating Win Percentage
+			function percentCal(){
+				if (num1 == 50){
+					winPercent = 100/50
+					highWin = winPercent.toFixed(2)
+					lowWin = winPercent.toFixed(2)
+					//alert("High: " + winPercent + "Low: " + lowWin)
+				}
+				
+				else if (num1 > 50){
+					winPercent = 100-num1
+					winPercent = 100/winPercent
+					highWin = winPercent.toFixed(2)
+					lowWin = (100/num1).toFixed(2)
+					//alert("High: " + winPercent + "\nLow: " + lowWin)
+				}
+				
+				else if (num1 < 50){
+					lowWin = (100/num1).toFixed(2)
+					winPercent = 100-num1
+					highWin = (100/winPercent).toFixed(2)
+					//alert("High: " + highWin + "\nLow: " + lowWin)
+				}
+				
+				else{
+					percentCal()
+				}
+				//update()
+			}
+			
+			//Checking User Guess/Win Loss Function
+			function highLow(){
+				userInput = prompt("Number 1 is: " + num1 + "\nDo you think next number wil be higer or lower?\n1. Higher: x" + highWin + "\n2. Lower: x" + lowWin)
+				highLow2()
+				
+				function highLow2(){
+				
+					if(userInput == 1){
+						var greater = Boolean(num1 < num2)
+
+						//User guess high & number is high user win
+						if(greater == true){
+							balance = balance.toFixed(2)
+							winAmount = (moneyPlaced * highWin)
+							winAmount = winAmount.toFixed(2)
+							balance = (Number(balance) + Number(winAmount)).toFixed(2)
+							alert("Number 2 is: " + num2)
+							//alert("User Input: " + userInput)
+							alert("Correct")
+							alert("You won $" + winAmount)
+							alert("You now have $" + balance)
+							moneyPlaced = moneyPlaced - moneyPlaced
+							
+							//update()
+						}
+
+						//User guess high & number is low user lose
+						else if(greater == false){
+							balance = balance.toFixed(2)
+							alert("Number 2 is: " + num2)
+							//alert("User Input: " + userInput)
+							alert("Incorrect")
+							alert("You lost $" + moneyPlaced)
+							alert("You now have $" + balance)
+							moneyPlaced = moneyPlaced - moneyPlaced
+							
+							//update()
+						}
+
+						else{
+							alert(error)
+						}
+					}
+
+					else if(userInput == 2){
+						var smaller = Boolean(num1 > num2)
+
+						//User guess low & number is low user win
+						if(smaller == true){
+							balance = balance.toFixed(2)
+							winAmount = (moneyPlaced * lowWin)
+							winAmount = winAmount.toFixed(2)
+							balance = (Number(balance) + Number(winAmount)).toFixed(2)
+							alert("Number 2 is: " + num2)
+							//alert("User Input: " + userInput)
+							alert("Correct")
+							alert("You won $" + winAmount)
+							alert("You now have $" + balance)
+							moneyPlaced = moneyPlaced - moneyPlaced
+							
+							//update()
+						}
+
+						//User guess low & number is high user lose
+						else if(smaller == false){
+							balance = balance.toFixed(2)
+							alert("Number 2 is: " + num2)
+							//alert("User Input: " + userInput)
+							alert("Incorrect")
+							alert("You lost $" + moneyPlaced)
+							alert("You now have $" + balance)
+							moneyPlaced = moneyPlaced - moneyPlaced
+							
+							//update()
+						}
+					}
+					else{
+						//alert(error)
+						while(isNaN(userInput) || userInput == "" || userInput > 2 || userInput < 1){
+							userInput = prompt("User input: " + userInput + "\nPlease Enter a valid input\nNumber 1: " + num1 + "\nDo you think next number wil be higer or lower?\n1. Higher: x" + highWin + "\n2. Lower: x" + lowWin)
+							highLow2()
+						}
+					}
+					replay()
+				}
+			}
+	
+				/*while(userInput != 1 || userInput != 2){
+					userInput = prompt("Please Enter a valid input\nNumber 1: " + num1 + "\nDo you think next number wil be higer or lower?\n1. Higher\n2. Lower")
+				}*/
+			
+			//Ask user if they want to play again. If yes number 2 becomes number 1, then number 2 generated randomly
+			function replay(){
+				if(balance == 0){
+					alert("Sorry you have no more money\nThanks for playing")
+					quitgame()
+				}
+				var again = prompt("Do You want to play again?\n1. Yes\n2. No")
+				replay2()
+				
+				function replay2(){
+					if(again == 1){
+						num1 = num2
+						num2 = Math.floor(Math.random() * 100 + 1);
+						percentCal()
+						update()
+						roundBet()
+					}	
+					
+					else if(again == 2 || again == null){
+						alert("You have walked away with $" + balance + ". Thank you for playing")
+						quitgame()
+					}
+				
+					else{
+						while(isNaN(again) || again == "" || again > 2 || again < 1 || again < 2 & again > 1){
+							again = prompt("Please enter a valid input.\nDo You want to restart the game?\n1. Yes\n2. No")
+							replay2()
+						}
+					}
+				}
+			}
+			
+		</script>
+		<style>
+			body{
+				background-color: lightsalmon;
+			}
+			a {
+				text-decoration: none;
+				color: chartreuse;
+				font-size: 40px;
+				font-family: 'Cutive Mono', monospace;
+				border: 2px solid white;
+			}
+			
+			a:active {
+				color: chartreuse;
+			}
+			
+			a:hover{
+				background-color: #FF8858;
+			}
+			
+			#play {
+				padding: 2px 20px;
+			}
+			
+			#body {
+				line-height: 910px;
+				/*border: 1px black solid;*/
+				
+			}
+			
+			#child {
+				text-align: center;
+    			vertical-align: middle;
+				/*border: 2px solid red*/
+			}
+		</style>
+	</head>
+	
+	<body>
+		<!--<button type="button" onClick="startMenu()">Play</button>
+		<button type="button" onClick="userDeposit()">Deposit</button>
+		<button type="button" onClick="roundBet()">Round Bet</button>
+		<button type="button" onClick="randomNumber()">Generate Number</button>
+		<button type="button" onClick="randomNumber2()">Generate Number 2</button>
+		<button type="button" onClick="highLow()">User Guess</button>
+		<button type="button" onClick="percentCal()">Percent Calculator</button>
+		<button type="button" onClick="replay()">Play Again</button><br><br>
+		<p id="startamount">Start Amount: $0</p>
+		<p id="deposit">You have $0</p>
+		<p id="betround">You Placed $0</p>
+		<p id="ranNum1">Number 1: 0</p>
+		<p id="ranNum2">Number 2: 0</p>
+		<p id="amountWon">Amount Won: $0</p>
+		<p id="userGuess">User Input: 0</p>
+		<p id="feedback">FeedBack: </p>
+		<p id="hiWin">High <br>x0.00</p>
+		<p id="loWin">Low <br>x0.00</p>-->
+		<!--<button type="button" onClick="save()">Save</button>
+		<button type="button" onClick="load()">Load</button>
+		<button type="button" onClick="reset()" id="reset">Reset</button>--><br>
+		<!--Save, Load, Reset Script-->
+		<div id="body">
+			<div id="child">
+				<a href="#" onClick="startMenu()" id="play">P L A Y</a>
+			</div>
+			
+		</div>
+		
+	<!--<script>
+		
+		function save(){
+			localStorage.setItem("Balance", balance)
+			localStorage.setItem("Round Bet", moneyPlaced)
+			localStorage.setItem("num1", num1)
+			localStorage.setItem("num2", num2)
+		}
+			
+		function load(){
+			balance = localStorage.getItem("Balance")
+			balance = parseInt(balance);
+				
+			moneyPlaced = localStorage.getItem("Round Bet")
+			moneyPlaced = parseInt(moneyPlaced);
+				
+			num1 = localStorage.getItem("num1", num1)
+			num1 = parseInt(num1);
+				
+			num2 = localStorage.getItem("num2", num2)
+			num2 = parseInt(num2);
+			update()
+		}
+			
+		function reset(){
+			if(confirm("Are you sure you want to reset game")){
+				alert("Your progress has been wiped")
+				localStorage.clear()	
+				balance = 0;
+				roundBet = 0;
+				num1 = 0;
+				num2 = 0;
+				update()
+			}
+				
+		}
+		
+		</script>-->
+	</body>
+</html>
