@@ -1,3 +1,6 @@
+<!--Bradley Chung 2019-->
+<!--HiLow Game-->
+<!--Contact - Bradley.chung@liston.school.nz-->
 <!DOCTYPE html>
 <html>
 	<head>
@@ -20,13 +23,13 @@
 			var highWin = 0;
 			var lowWin = 0;
 			
-			//Sets checkDeposit back to false so game can restart and user can deposit. Also creates an intentional error to force quit the game 
+			//When the user quits game this will set checkDeposit back to false so the game can restart when you quit. The "throw new Error" makes an error so the javascript will run into error which force quits it.
 			function quitgame(){
 				checkDeposit = false
 				throw new Error("This is not an error. This is to quit the program.");
 			}
 			
-			//Update Function - Used for testing
+			//Update Function - THis part was used for testing
 			/*function update(){
 				document.getElementById("deposit").innerHTML = "You have $" + balance
 				
@@ -49,46 +52,56 @@
 				//document.getElementById("startamount").innerHTML = "Start Amount: $" + start
 			}*/
 			
-			//Menu Function
+			//Menu Function - Prompts the user with a menu where they can either continue to play or quit.
 			function startMenu(){
 				var menu = prompt("Welcome to Hi Low Game. \nWhat would you like to do?\n 1. Play Game\n 2. Quit Game")
 				startMenu2()
+				
+				//Inside the startMenu function I added another function this way I am able to loop the code without any problems
 				function startMenu2(){
+					//When the menu is prompted this if statement checks if user typed in 1 if they did then it will call the userDeposit function which will allow the user to continue
 					if(menu == 1){
 						//alert("User Input: " + menu +"\nContinue")
 						userDeposit()
 					}
-					
+					//Checks that user input is either 2 or null, null meaning that the cancel button has been pressed. It will then procced to display a quit message and calls the quitgame function which stops the program.
 					else if(menu == 2 || menu == null){
 						//alert("User Input: " + menu)
 						alert("You have quit. Thanks for playing.")	  
 						quitgame()
 					}
-				
+					//This else makes it so that of non of the above are enter e.g. "1 or 2" it will this part of the code.
 					else{
 						//menu = prompt("User Input: " + menu + "\nAn error has occurred while running the program. Please try again.\n 1. Play Game\n 2. Quit Game")
+						
+						//This while loop was used to check the input of the user for the menu prompt. This just made sure that it was either 1, 2 or the cancel button was entered or pressed and that nothing in between the numbers or lower than 1 and higher than 2 was entered. It also checked if the user had entered anything and checked if they were valid numbers.
 						while(isNaN(menu) || menu == "" || menu > 2 || menu < 1 || menu < 2 & menu > 1){
 							menu = prompt("User Input: " + menu + "\nPlease enter a valid input. Please try again.\n 1. Play Game\n 2. Quit Game")
+							//Calls back to the start of the function to allow it to check the response again without asking the orginal question
 							startMenu2()
 						}
 					}
 				}
 			}
 			
-			//Deposit Function
+			//Deposit Function - Displays a prompt to ask the user how much they want to deposit between $1-$1000
 			function userDeposit(){
+				//This if statement just makes sure that the user can't deposit again if they already have.(Would be imposible as the game should continue and not loop back unless game ends)
 				if (checkDeposit == true){
 						alert("Sorry you have already deposited this game")
 					}
-				
+				//If the checkDeposit is false then it would ask the user how much they would like to deposit. THis should be set to false when the game first starts
 				else{
 					deposit = prompt("How much would you want to deposit between $1-$1000.")
-
+					
+					//This while loop will run as long as checkDeposit is false 
 					while(checkDeposit == false){
+						//Loop checks userdeposit to make sure there was a value that the deposit is not less than 0 or greater than 1000 and that the user input is a interger. Otherwise it would ask the question of how much you want to deposit again.
 						while(isNaN(deposit) || deposit == "" || deposit <= 0 || deposit > 1000){
 							deposit = prompt("User input: " + deposit + "\nPlease enter a valid amount between $1-$1000.\nHow much would you want to deposit?")
 						}
-
+						
+						//If the user's input checks out and is valid then it will run this part. This bit sets checkdeposit to true, changes the balance to the deposit amount, alerts the user how much they have then it will call the randomNunmber function.
 						checkDeposit = true
 						balance = parseFloat(Number(deposit))
 						//alert("User input: " + deposit)
@@ -101,23 +114,28 @@
 				}
 			}
 					
-			//User Round Bet
+			//User Round Bet - Ask the user how much they would like to bet that round.
 			function roundBet(){
+				//If some how the program continued while the user balance was zero it would alert they the user doesn't have any money remaining to play with.
 				if (balance == 0){
 					alert("Sorry you don't have any money left.")
 				}
 				
+				//Otherwise if the user does have a balance greater than $0, it will ask the user how much they would like to deposit and shows the balance.
 				else{
 					userBet = prompt("How much do you want to bet this round?\nYou have $" + balance)
 					
+					//If the input is less than 0 or is not a valid number or is empty it would run this while loop and would display this that input was invalid and ask them again showing them their balance.
 					while(userBet <= 0 || isNaN(userBet) || userBet == ""){
 						userBet = prompt("User Input: " + userBet + "\nSorry your input was invalid.\nHow much do you want to bet this round?\nYou have: $" + balance + " to play with")
 					}
 					
+					//If the user input was more than their actual balance it will display a message and ask them how much they want to bet while showing their balance.
 					while(userBet > parseFloat(balance)){
 						userBet = prompt("User Input: " + userBet + "\nSorry you don't have enough balance.\nYou have $" + balance + " to play with")
 					}
 					
+					//This if statement makes sure that the user bet is less or equal to their balance
 					if(userBet <= balance){
 						alert("You bet $" + userBet)
 						moneyPlaced = Number(moneyPlaced) + Number(userBet)
@@ -127,22 +145,29 @@
 						userBet = 0;
 					}
 					
+					//If none of this works it will go back to the start of round bet.
 					else{
 						roundBet()
 					}
 					
+					//This sets the moneyplaced to the amount the user bet then it calls the highlow function
 					moneyPlaced = Number(moneyPlaced) + Number(userBet)
 					highLow()
 				}
 			}
 			
-			//Number generation
+			//Number generation - Generates two random numbers 
 			function randomNumber() {
+				//This generates the two random numbers used
 				num1 = Math.floor(Math.random() * 100 + 1);
 				num2 = Math.floor(Math.random() * 100 + 1);
+				
+				//This shouold make it so if numnber 2 equals to number 1 it should regenerate number two
 				if (num2 == num1){
 					num2 = Math.floor(Math.random() * 100 + 1);
 				}
+				
+				//If the numbers don't match up then it will run percentCal and round bet which is the function above this one.
 				else{
 					//update()
 					percentCal()
@@ -155,8 +180,10 @@
 				update()
 			}*/
 			
-			//Calculating Win Percentage
+			//Calculating Win Percentage - This function takes the two numbers and calculates the win percentages for both low and high.
 			function percentCal(){
+				
+				//If number 1 is 50 then it would set both highwin and low wing to x2 as it is a 50/50 chance of it going over or below
 				if (num1 == 50){
 					winPercent = 100/50
 					highWin = winPercent.toFixed(2)
@@ -164,6 +191,8 @@
 					//alert("High: " + winPercent + "Low: " + lowWin)
 				}
 				
+				//If number 1 is greater than 50 than it would subtract number 1 from 100 then it would take the output and divide it by 100.
+				//High win is equal to winpercent and low win is equal to number 1 divide by 100. Both are set to two decimal places
 				else if (num1 > 50){
 					winPercent = 100-num1
 					winPercent = 100/winPercent
@@ -172,6 +201,7 @@
 					//alert("High: " + winPercent + "\nLow: " + lowWin)
 				}
 				
+				//If number 1 is lower than 50 than low win will be number 1 divided by 100 rounded to two decimals and high win would be calculated by subtracting number 1 from 100 then taking the outcome and dividing that by 100, this is also rounded to two decimals
 				else if (num1 < 50){
 					lowWin = (100/num1).toFixed(2)
 					winPercent = 100-num1
@@ -179,23 +209,24 @@
 					//alert("High: " + highWin + "\nLow: " + lowWin)
 				}
 				
+				//If non of the if statements work out then this would call back to the start of the function. (This shouldn't be used as it would calculate all the time)
 				else{
 					percentCal()
 				}
 				//update()
 			}
 			
-			//Checking User Guess/Win Loss Function
+			//Checking User Guess/Win Loss Function - This function checks the users guess compared to number 2.
 			function highLow(){
 				userInput = prompt("Number 1 is: " + num1 + "\nDo you think next number wil be higer or lower?\n1. Higher: x" + highWin + "\n2. Lower: x" + lowWin)
 				highLow2()
 				
 				function highLow2(){
-				
+					//If the user input was 1 it makes a new variable and the value for that will be either true of false depending if number 2 is greater than number 1
 					if(userInput == 1){
 						var greater = Boolean(num1 < num2)
 
-						//User guess high & number is high user win
+						//User guess high, if number 2 is greater than number 1 then the user will win money
 						if(greater == true){
 							balance = balance.toFixed(2)
 							winAmount = (moneyPlaced * highWin)
@@ -211,8 +242,8 @@
 							
 							//update()
 						}
-
-						//User guess high & number is low user lose
+						
+						//This sets it so if the user input was 1 and the variable greater is false then the user looses their bet amount.
 						else if(greater == false){
 							balance = balance.toFixed(2)
 							alert("Number 2 is: " + num2 + "\nIncorrect\nYou lost $" + moneyPlaced + "\nYou now have $" + balance)
@@ -225,16 +256,16 @@
 							
 							//update()
 						}
-
 						else{
 							alert(error)
 						}
 					}
-
+					
+					//This if statement is used when the user input is 2, it sets a new variable called smaller and the value is set to either true of false depending if number 1 is smaller than number 2
 					else if(userInput == 2){
 						var smaller = Boolean(num1 > num2)
 
-						//User guess low & number is low user win
+						//User guess low, if number 2 is smaller than number 1 then the user will win money
 						if(smaller == true){
 							balance = balance.toFixed(2)
 							winAmount = (moneyPlaced * lowWin)
@@ -251,7 +282,7 @@
 							//update()
 						}
 
-						//User guess low & number is high user lose
+						//If user input is 2 and the variable small is false then the user looses their bet amount
 						else if(smaller == false){
 							balance = balance.toFixed(2)
 							alert("Number 2 is: " + num2 + "\nIncorrect\nYou low $" + moneyPlaced + "\nYou now have $" + balance)
@@ -265,8 +296,10 @@
 							//update()
 						}
 					}
+					//If the user didn't enter either 1 or 2 then it would run this part of the code
 					else{
 						//alert(error)
+						//This while loop makes sure that the input is a nunmber is not empty is smaller than 2 and greater than 1
 						while(isNaN(userInput) || userInput == "" || userInput > 2 || userInput < 1){
 							userInput = prompt("User input: " + userInput + "\nPlease Enter a valid input\nNumber 1: " + num1 + "\nDo you think next number wil be higer or lower?\n1. Higher: x" + highWin + "\n2. Lower: x" + lowWin)
 							highLow2()
@@ -276,8 +309,10 @@
 				}
 			}
 			
-			//Ask user if they want to play again. If yes number 2 becomes number 1, then number 2 generated randomly
+	
+			//Ask the user if they want to play another round, if the user wants to continue then number 2 becomes number 1, then number 2 gets regenerated randomly
 			function replay(){
+				//This statement makes sure that the user can't continue to play while they have a balance of $0
 				if(balance == 0){
 					alert("Sorry you have no more money\nThanks for playing")
 					quitgame()
@@ -286,6 +321,8 @@
 				replay2()
 				
 				function replay2(){
+					
+					//Runs the code to play another round, number 2 becomes number 1, then number 2 gets regenerated randomly
 					if(again == 1){
 						num1 = num2
 						num2 = Math.floor(Math.random() * 100 + 1);
@@ -294,13 +331,15 @@
 						roundBet()
 					}	
 					
+					//If user enters 2 or hits the cancle button then it will display a farewell message with how much they walked away with
 					else if(again == 2 || again == null){
 						alert("You have walked away with $" + balance + ". Thank you for playing")
 						quitgame()
 					}
 				
 					else{
-						while(isNaN(again) || again == "" || again > 2 || again < 1 || again < 2 & again > 1){
+						//While loop checks that the input is a valid interger or not an empty space or is bigger than 2 or is smaller than 1 or is not smaller than 2 and bigger than 1
+						while(isNaN(again) || again == "" || again > 2 || again < 1 || again < 2 && again > 1){
 							again = prompt("Please enter a valid input.\nDo You want to playagain?\n1. Yes\n2. No")
 							replay2()
 						}
@@ -309,6 +348,7 @@
 			}
 	
 		</script>
+		<!--This is part of the css, this allows the website to be nicely designed. The colors and the button alignment and the hover effects-->
 		<style>
 			body{
 				background-color:#12ABA4;
@@ -352,7 +392,10 @@
 	</head>
 	
 	<body>
-		<!--<button type="button" onClick="startMenu()">Play</button>
+		<!--
+		This part of the html was used to help display the different outcomes of the elements without the popups which was used for testing.
+		
+		<button type="button" onClick="startMenu()">Play</button>
 		<button type="button" onClick="userDeposit()">Deposit</button>
 		<button type="button" onClick="roundBet()">Round Bet</button>
 		<button type="button" onClick="randomNumber()">Generate Number</button>
@@ -379,7 +422,10 @@
 			</div>
 			
 		</div>
-	<!--<script>
+	<!--
+		This script was part of my original concept for the game but I later decied to take it our
+		
+		<script>
 		
 		function save(){
 			localStorage.setItem("Balance", balance)
